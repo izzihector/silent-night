@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="merge_inv_res_config_settings_inherit_view" model="ir.ui.view">
+        <field name="name">inv.res.config.settings.inherit.view</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@data-key='account']//div[1]" position="after">
+                <h2>Merge Invoice Quantity</h2>
+                <div class="row mt16 o_settings_container">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="sh_inv_sub_merge_qty" />
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="sh_inv_sub_merge_qty" />
+                            <div class="text-muted"></div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- MERGE INVOICES WIZARDS-->
+    <record id="sh_merge_invoice_wizard_form" model="ir.ui.view">
+        <field name="name">sh.merge.invoice.wizard.form</field>
+        <field name="model">sh.minv.merge.invoice.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Merge Invoices">
+                <group>
+                    <group>
+                        <field name="inv_type" invisible="1" />
+                        <field name="invoice_ids" widget="many2many_tags" invisible="1" />
+                        <field name="partner_id" />
+                        <field name="invoice_id" domain="[('state','=','draft'),('partner_id','=',partner_id),('move_type','=',inv_type),('id','not in',invoice_ids)]" />
+                        <field name="merge_type" widget="radio" />
+                    </group>
+                </group>
+				<notebook>
+                    <page string="Merge Lines" name="merge_line_ids">
+                        <field name="merge_line_ids" widget="section_and_note_one2many" mode="tree">
+                            <tree string="Merge Lines" editable="bottom" create="false" delete="false">
+                            	<field name="inv_id" required="1" readonly="1" force_save="1" />
+                                <field name="product_id" readonly="1" force_save="1" required="1" />
+                                <field name="qty" required="1" />
+                                <field name="qty_available" readonly="1" force_save="1"/>
+                                <field name="inv_line_id" invisible="1" />
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+                <footer>
+                    <button class="btn-primary" name="action_merge_invoice" type="object" string="Merge" />
+                    <button string="Cancel" class="oe_link" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="sh_merge_invoice_multi_action" model="ir.actions.act_window">
+        <field name="name">Merge Invoices</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sh.minv.merge.invoice.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="sh_merge_invoice_wizard_form" />
+        <field name="binding_model_id" ref="account.model_account_move" />
+        <field name="binding_view_types">list</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

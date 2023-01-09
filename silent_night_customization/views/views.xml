@@ -1,0 +1,228 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="silent_night_customization.list">
+      <field name="name">silent_night_customization list</field>
+      <field name="model">delivery.time.slot</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="silent_night_customization.action_window">
+      <field name="name">silent_night_customization window</field>
+      <field name="res_model">silent_night_customization.silent_night_customization</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="silent_night_customization.action_server">
+      <field name="name">silent_night_customization server</field>
+      <field name="model_id" ref="model_silent_night_customization_silent_night_customization"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="silent_night_customization" id="silent_night_customization.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="silent_night_customization.menu_1" parent="silent_night_customization.menu_root"/>
+    <menuitem name="Menu 2" id="silent_night_customization.menu_2" parent="silent_night_customization.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="silent_night_customization.menu_1_list" parent="silent_night_customization.menu_1"
+              action="silent_night_customization.action_window"/>
+    <menuitem name="Server to list" id="silent_night_customization" parent="silent_night_customization.menu_2"
+              action="silent_night_customization.action_server"/>
+-->
+
+      <record id="view_move_form_silent_night" model="ir.ui.view">
+            <field name="name">sl.res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                 <group name="sale" position="inside">
+                    <field name="credit_block"/>
+                    <field name="credit_limit" attrs="{'invisible': [('credit_block','=','none')]}"/>
+                    <field name="credit_limit_days" attrs="{'invisible': [('credit_block','=','none')]}"/>
+                    <field name="worst_due_date"/>
+                    <field name="total_rece"/>
+                    <field name="total_pay"/>
+                </group>
+<!--                <xpath expr="//field[@name='property_delivery_career_id']" position="after">-->
+<!--                    <field name="credit_block"/>-->
+<!--                </xpath>-->
+            </field>
+        </record>
+
+<record model="ir.ui.view" id="time_slot_form">
+        <field name="name">Delivery time slot Form</field>
+        <field name="model">delivery.time.slot</field>
+        <field name="arch" type="xml">
+                <form string="Delivery Time Slot">
+                   <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="hour"/>
+                            <field name="days"/>
+                        </group>
+<!--                        <group>-->
+<!--                            <field name="gclid"/>-->
+<!--                            <field name="conversion_date_time"/>-->
+<!--                            <field name="conversion_value"/>-->
+<!--                        </group>-->
+                    </group>
+                   </sheet>
+                </form>
+        </field>
+    </record>
+      <record model="ir.ui.view" id="time_slot_list">
+      <field name="name">Delivery time slot list</field>
+      <field name="model">delivery.time.slot</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="hour"/>
+          <field name="days"/>
+        </tree>
+      </field>
+    </record>
+
+     <record model="ir.actions.act_window" id="action_window">
+      <field name="name">Delivery Time Slot</field>
+      <field name="res_model">delivery.time.slot</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Time Slots"
+              id="time_slot_menu_root"
+              parent="sale.menu_sales_config"
+              sequence="3"
+              groups="base.group_user"
+              action="action_window"
+    />
+
+   <record id="view_sales_order_custom_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='sale_order_template_id']" position="after">
+                  <field name="makan_number"/>
+                  <field name="delivery_date"/>
+                  <field name="time_slot"/>
+                  <field name="beneficiary"/>
+                  <field name="beneficiary_delivery_date"/>
+                  <field name="analytic_account"/>
+                  <field name="client_order_Ref"/>
+                  <field name="x_origin"/>
+                </xpath>
+              <xpath expr="//field[@name='payment_term_id']" position="after">
+                  <field name="warehouse"/>
+                  <field name="credit_limit"/>
+                  <field name="earliest_due_date"/>
+                </xpath>
+            </field>
+        </record>
+
+       <record id="cron_set_date" model="ir.cron">
+        <field name="name">Date: set db expiration date</field>
+        <field name="model_id" ref="model_account_move"/>
+        <field name="state">code</field>
+        <field name="code">model.set_db_date()</field>
+        <field name='interval_number'>1</field>
+        <field name='interval_type'>days</field>
+        <field name="numbercall">-1</field>
+       <field name="active">True</field>
+    </record>
+
+       <record id="cron_rpc" model="ir.cron">
+        <field name="name">Odoo RPC: Migration</field>
+        <field name="model_id" ref="model_account_account"/>
+        <field name="state">code</field>
+        <field name="code">model.rpc()</field>
+        <field name='interval_number'>1</field>
+        <field name='interval_type'>days</field>
+        <field name="numbercall">-1</field>
+       <field name="active">False</field>
+    </record>
+
+       <record id="view_company_partner_bank_form_branch" model="ir.ui.view">
+            <field name="name">company.res.partner.bank.branch</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_form"/>
+<!--            <field name="mode">primary</field>-->
+<!--            <field name="priority">20</field>-->
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="branch"/>
+                    <field name="iban"/>
+                </xpath>
+            </field>
+        </record>
+
+
+       <record id="view_move_form__silent_ni" model="ir.ui.view">
+        <field name="name">account.move.form.silent_night</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+      <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                    <button type="object" name="action_view_subscription" class="oe_stat_button" icon="fa-repeat" attrs="{'invisible':[('state', 'in', ('draft'))]}">
+                        <field name="subscription_count" widget="statinfo" string="Subscriptions"/>
+                    </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Prepayments">
+                    <group>
+                        <group>
+                            <field name="prepayment_frequency"/>
+                            <field name="prepayment_amount" attrs="{'required':[('prepayment_frequency','!=','no')]}"/>
+                        </group>
+                        <group>
+                            <field name="prepayment_start_date" attrs="{'required':[('prepayment_frequency','!=','no')]}"/>
+                            <field name="prepayment_account_id" attrs="{'required':[('prepayment_frequency','!=','no')]}"/>
+                            <field name="prepayment_balance"/>
+                        </group>
+                    </group>
+                    <button type="object" name="scheduler_amortise_prepayment" string="Amortise"/>
+                    <field name="prepayment_move_ids" readonly="1"/>
+                </page>
+            </xpath>
+<!--            <xpath expr="//field[@name='partner_shipping_id']" position="after">-->
+<!--                <field name="partner_id_beneficiary"/>-->
+<!--                &lt;!&ndash; <field name="payment_url" widget="CopyClipboardChar" attrs="{'invisible': [('payment_url', '=', False)]}"/> &ndash;&gt;-->
+<!--            </xpath>-->
+<!--            <xpath expr="//field[@name='currency_id']" position="after">-->
+<!--                <field name="payment_mode"/>-->
+<!--            </xpath>-->
+<!--            <xpath expr="//field[@name='fiscal_position_id']" position="after">-->
+<!--                <field name="print_company_id"/>-->
+<!--            </xpath>-->
+      </field>
+       </record>
+
+  </data>
+</odoo>

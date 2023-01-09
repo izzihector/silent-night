@@ -1,0 +1,64 @@
+<odoo>
+<data>
+
+    <template id = "silent_night_customization.report_invoice" inherit_id="account.report_invoice_document">
+        <xpath expr="//p[@name='payment_communication']" position="before">
+            <span t-esc="o.currency_id.with_context(lang='es_AR').amount_to_text(o.amount_total)"/>
+<!--            </p>-->
+        </xpath>
+        <xpath expr="//p[@name='payment_communication']" position="after">
+            <t t-set="journal" t-value="o.x_payment_mode"/>
+            <t t-if="not journal">
+              <t t-set="journal" t-value="env['account.journal'].search([('type','=','bank'),('currency_id','=',o.currency_id.id)],limit=1)"/>
+            </t>
+            <t t-if="not journal">
+              <t t-set="journal" t-value="env['account.journal'].search([('type','=','bank'),('company_id','=',o.company_id.id)],limit=1)"/>
+            </t>
+
+            <div t-if="journal" style="page-break-inside: avoid;">
+                <t t-set="account" t-value="journal.bank_account_id"/>
+                <p><strong>Bank details for payment purposes:</strong></p>
+                <div class="row border">
+                    <div class="col-auto mw-100 mb-2">
+                        <span class="font-weight-bold">Beneficiary</span>
+                        <p t-esc="account.acc_holder_name" t-if="account.acc_holder_name"/>
+                        <p t-esc="o.company_id.name" t-else=""/>
+                    </div>
+                    <div class="col-auto mw-100 mb-2">
+                        <span class="font-weight-bold">Bank name</span>
+                        <p t-esc="account.bank_id.name"/>
+                    </div>
+                    <div class="col-auto mw-100 mb-2">
+                        <span class="font-weight-bold">Branch</span>
+                        <p t-esc="account.branch"/>
+                    </div>
+                    <div class="col-auto mw-100 mb-2">
+                        <span class="font-weight-bold">A/C No.</span>
+                        <p t-esc="account.acc_number"/>
+                    </div>
+                    <div class="col-auto mw-100 mb-2">
+                        <span class="font-weight-bold">IBAN No.</span>
+                        <p t-esc="account.iban"/>
+                    </div>
+                    <div class="col-auto mw-100 mb-2">
+                        <span class="font-weight-bold">Swift</span>
+                        <p t-esc="account.bank_id.bic"/>
+                    </div>
+                </div>
+            </div>
+
+        </xpath>
+        <xpath expr="//p[@name='note']" position="after">
+            <div class="row small">
+                <div class="col-xs-4 pull-left">
+                    <br/>
+                    <img t-if="o.user_id.signature" t-att-src="'data:image/png;base64,%s' % o.user_id.signature" style="max-width: 100px;"/>
+                    <br/>
+                    <div><span t-field="o.user_id"/></div>
+                </div>
+            </div>
+        </xpath>
+        </template>
+    </data>
+
+    </odoo>

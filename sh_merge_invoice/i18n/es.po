@@ -1,0 +1,132 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sh_merge_invoice
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-17 09:50+0000\n"
+"PO-Revision-Date: 2020-10-17 09:50+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sh_merge_invoice
+#: model_terms:ir.ui.view,arch_db:sh_merge_invoice.sh_merge_invoice_wizard_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields.selection,name:sh_merge_invoice.selection__sh_minv_merge_invoice_wizard__merge_type__cancel
+msgid "Cancel Other Invoices"
+msgstr "Cancelar otras facturas"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard__create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard__partner_id
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields.selection,name:sh_merge_invoice.selection__sh_minv_merge_invoice_wizard__merge_type__nothing
+msgid "Do Nothing"
+msgstr "Hacer nada"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard__id
+msgid "ID"
+msgstr "CARNÉ DE IDENTIDAD"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard__invoice_id
+msgid "Invoice"
+msgstr "Factura"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard__inv_type
+msgid "Invoice Type"
+msgstr "Tipo de factura"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard__invoice_ids
+msgid "Invoices"
+msgstr "Facturas"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard____last_update
+msgid "Last Modified on"
+msgstr "Última modificación el"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Actualizado por última vez por"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard__write_date
+msgid "Last Updated on"
+msgstr "Ultima actualización en"
+
+#. module: sh_merge_invoice
+#: model_terms:ir.ui.view,arch_db:sh_merge_invoice.sh_merge_invoice_wizard_form
+msgid "Merge"
+msgstr "Unir"
+
+#. module: sh_merge_invoice
+#: model:ir.model,name:sh_merge_invoice.model_sh_minv_merge_invoice_wizard
+msgid "Merge Invoice Wizard"
+msgstr "Asistente para fusionar facturas"
+
+#. module: sh_merge_invoice
+#: model:ir.actions.act_window,name:sh_merge_invoice.sh_merge_invoice_multi_action
+#: model_terms:ir.ui.view,arch_db:sh_merge_invoice.sh_merge_invoice_wizard_form
+msgid "Merge Invoices"
+msgstr "Fusionar facturas"
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields,field_description:sh_merge_invoice.field_sh_minv_merge_invoice_wizard__merge_type
+msgid "Merge Type"
+msgstr "Tipo de combinación"
+
+#. module: sh_merge_invoice
+#: code:addons/sh_merge_invoice/wizard/merge_invoice.py:0
+#, python-format
+msgid "Please Select atleast two invoices to perform merge operation."
+msgstr "Seleccione al menos dos facturas para realizar la operación de combinación."
+
+#. module: sh_merge_invoice
+#: code:addons/sh_merge_invoice/wizard/merge_invoice.py:0
+#, python-format
+msgid ""
+"Programming error: wizard action executed without active_ids in context."
+msgstr ""
+"Error de programación: acción del asistente ejecutada sin active_ids en contexto".
+
+#. module: sh_merge_invoice
+#: model:ir.model.fields.selection,name:sh_merge_invoice.selection__sh_minv_merge_invoice_wizard__merge_type__remove
+msgid "Remove Other Invoices"
+msgstr "Eliminar otras facturas"
+
+#. module: sh_merge_invoice
+#: code:addons/sh_merge_invoice/wizard/merge_invoice.py:0
+#, python-format
+msgid "You can only merge invoices which are in draft state"
+msgstr "Solo puede fusionar facturas que estén en estado de borrador"
