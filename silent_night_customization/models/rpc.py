@@ -30,7 +30,7 @@ class Account(models.Model):
         # odoo = odoorpc.ODOO('example.net', port=80, opener=opener)
         odoo = odoorpc.ODOO('erp.silentnight.ae', protocol='jsonrpc+ssl',opener=opener, port=443)
         # Check available databases
-        print(odoo.db.list())
+        #print(odoo.db.list())
         # Login
         odoo.login(odoo.db.list()[0], 'admin', 'SilentNightOdoo')
         db = odoo.db.list()[0]
@@ -50,7 +50,7 @@ class Account(models.Model):
              ('state', '=', 'sale')], order='id asc', limit=40)
         counter = 0
         for sl_id in sale_orders:
-            if sl_id not in [38520, 38521]:
+            if sl_id not in [38520, 38521,22663,23708,22898,27699,23000,23211,25907]:
                 so = odoo.env['sale.order'].browse(sl_id)
                 # print(so.updated_in_shopify)
                 sale_order_id = self.env['sale.order'].create({
@@ -73,7 +73,7 @@ class Account(models.Model):
                     'updated_in_shopify': so.updated_in_shopify
                 })
                 counter += 1
-                print("==========", counter)
+               # print("==========", counter)
 
     def get_partner_id(self, aa):
         if aa.partner_id:
@@ -88,7 +88,7 @@ class Account(models.Model):
                 return x_partner.id
         else:
             return False
-        print("CUSTOMER")
+        #print("CUSTOMER")
 
     def get_benef_id(self, aa):
         if aa.partner_id:
@@ -103,7 +103,7 @@ class Account(models.Model):
                 return x_partner.id
         else:
             return False
-        print("BENEFICIARY")
+        #print("BENEFICIARY")
 
     def get_warehouse_id(self, so):
         if so.warehouse_id:
@@ -112,7 +112,7 @@ class Account(models.Model):
                 return pt.id
         else:
             return False
-        print("WAREHOUSE")
+        #print("WAREHOUSE")
 
     def get_payment_term_id(self, so):
         if so.payment_term_id:
@@ -121,16 +121,18 @@ class Account(models.Model):
                 return pt.id
         else:
             return False
-        print("PAYMENT TERM")
+        #print("PAYMENT TERM")
 
     def get_pricelist_id(self, so):
         if so.pricelist_id:
             pricelst = self.env['product.pricelist'].search([('x_id', '=', so.pricelist_id.id)])
             if pricelst:
                 return pricelst.id
+            else:
+                return 19
         else:
             return False
-        print("PRICELIST")
+        #print("PRICELIST")
 
     def get_acc_id(self, so):
         if so.analytic_account_id:
@@ -139,7 +141,7 @@ class Account(models.Model):
                 return acc.id
         else:
             return False
-        print("A ACCOUNT")
+        #print("A ACCOUNT")
         # for pid in product_ids:
         #     product_data = odoo.execute('product.template', 'read', [pid])
         # print(user_data)
