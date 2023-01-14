@@ -221,6 +221,7 @@ class Account(models.Model):
             x_product = self.env['product.product'].create({'x_id': x_product[0]['id'],
                                                             'name': x_product[0]['name'],
                                                             'sale_ok': True,
+                                                            'categ_id' : 530,
                                                             'list_price': x_product[0]['list_price'],
                                                             'standard_price': x_product[0]['standard_price']
                                                             })
