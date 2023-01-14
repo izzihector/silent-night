@@ -50,7 +50,7 @@ class Account(models.Model):
              ('state', '=', 'sale')], order='id asc', limit=40)
         counter = 0
         for sl_id in sale_orders:
-            if sl_id not in [38520, 38521,22663,23708,22898,27699,23000,23211,25907]:
+            if sl_id not in [38520, 38521,22663,23708,22898,27699,23000,23211,25907,28515]:
                 so = odoo.env['sale.order'].browse(sl_id)
                 # print(so.updated_in_shopify)
                 sale_order_id = self.env['sale.order'].create({
@@ -175,7 +175,7 @@ class Account(models.Model):
         # Current user
         user = odoo.env.user
 
-        sale_orders = self.env['sale.order'].search([('x_is_updated', '=', False)], limit=10)
+        sale_orders = self.env['sale.order'].search([('x_is_updated', '=', False)], limit=40)
 
         for order_id in sale_orders:
             x_sale_line = odoo.env['sale.order.line'].search([('id', '=', int(order_id.x_id))])
