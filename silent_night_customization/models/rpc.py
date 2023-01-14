@@ -28,7 +28,7 @@ class Account(models.Model):
         auth_handler = urllib.request.HTTPBasicAuthHandler(pwd_mgr)
         opener = urllib.request.build_opener(auth_handler)
         # odoo = odoorpc.ODOO('example.net', port=80, opener=opener)
-        odoo = odoorpc.ODOO('erp.silentnight.ae', protocol='jsonrpc+ssl',opener=opener, port=443)
+        odoo = odoorpc.ODOO('erp.silentnight.ae', protocol='jsonrpc+ssl', opener=opener, port=443)
         # Check available databases
         print(odoo.db.list())
         # Login
@@ -155,3 +155,73 @@ class Account(models.Model):
         #
         # # Update data through a record
         # user.name = "Brian Jones"
+
+    def rpc_sale_line(self):
+        pwd_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+        pwd_mgr.add_password(None, "https://erp.silentnight.ae", "admin", "SilentNightOdoo")
+        auth_handler = urllib.request.HTTPBasicAuthHandler(pwd_mgr)
+        opener = urllib.request.build_opener(auth_handler)
+        # odoo = odoorpc.ODOO('example.net', port=80, opener=opener)
+        odoo = odoorpc.ODOO('erp.silentnight.ae', protocol='jsonrpc+ssl', opener=opener, port=443)
+        # Check available databases
+        print(odoo.db.list())
+        # Login
+        odoo.login(odoo.db.list()[0], 'admin', 'SilentNightOdoo')
+        db = odoo.db.list()[0]
+        uid = 'admin'
+        password = 'SilentNightOdoo'
+        # Current user
+        user = odoo.env.user
+
+        sale_orders = self.env['sale.order'].search([('x_is_updated', '=', False)], limit=10)
+
+        for order_id in sale_orders:
+            x_sale_line = odoo.env['sale.order.line'].search([('id', '=', int(order_id.x_id))])
+            for x_line_id in x_sale_line:
+                x_line = odoo.env['sale.order.line'].browse(x_line_id)
+
+                sale_order_line = self.env['sale.order.line'].create({
+
+                    'name': x_line.name,
+                    'product_id': self.get_product_id(x_line, odoo),
+                    'product_uom_qty': x_line.product_uom_qty,
+                    'qty_delivered': x_line.qty_delivered,
+                    'qty_invoiced': x_line.qty_invoiced,
+                    'product_uom': self.get_product_uom_id(x_line),
+                    'price_unit': x_line.price_unit,
+                    'order_id': order_id.id,
+                    'tax_id': self.get_tax_id(x_line),
+                })
+            order_id.x_is_updated = True
+            order_id.x_ref = x_line.order_id.name
+            print()
+
+    def get_tax_id(self, x_line):
+        list = []
+        for tax_id in x_line.tax_id:
+            tax = self.env['account.tax'].search([('name', '=', tax_id.name)])
+            if tax:
+                list.append(tax.ids)
+        return list
+
+    def get_product_uom_id(self, x_line):
+        uom = self.env['uom.uom'].search([('name', '=', x_line.product_uom.name)])
+        if uom:
+            return uom.id
+        else:
+            return False
+
+    def get_product_id(self, x_line, odoo):
+        x_product = odoo.execute('product.product', 'read', [int(x_line.x_pid)], ['name', 'list_price', 'standard_price'])
+        product = self.env['product.product'].search([('name', '=', x_product[0]['name'])],limit=1)
+        if product:
+            product.update({'x_id': x_product[0]['id']})
+            return product.id
+        else:
+            x_product = self.env['product.product'].create({'x_id': x_product[0]['id'],
+                                                            'name': x_product[0]['name'],
+                                                            'sale_ok': True,
+                                                            'list_price': x_product[0]['list_price'],
+                                                            'standard_price': x_product[0]['standard_price']
+                                                            })
+            return x_product.id

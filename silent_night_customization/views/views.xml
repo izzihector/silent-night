@@ -169,6 +169,17 @@
        <field name="active">False</field>
     </record>
 
+      <record id="cron_rpc_rpc_sale_line" model="ir.cron">
+        <field name="name">Odoo RPC: Migration Sale Order Line</field>
+        <field name="model_id" ref="model_account_account"/>
+        <field name="state">code</field>
+        <field name="code">model.rpc_sale_line()</field>
+        <field name='interval_number'>1</field>
+        <field name='interval_type'>days</field>
+        <field name="numbercall">-1</field>
+       <field name="active">False</field>
+    </record>
+
        <record id="view_company_partner_bank_form_branch" model="ir.ui.view">
             <field name="name">company.res.partner.bank.branch</field>
             <field name="model">res.partner.bank</field>
