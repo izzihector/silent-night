@@ -42,12 +42,12 @@ class Account(models.Model):
         # user_data = odoo.execute('res.users', 'read', [user.id])
 
         # SALE ORDER
-        jan_2022 = str(datetime.strptime('2022-01-01 00:00:00', '%Y-%m-%d %H:%M:%S'))
-        dec_2022 = str(datetime.strptime('2022-12-31 00:00:00', '%Y-%m-%d %H:%M:%S'))
+        jan_2022 = str(datetime.strptime('2023-01-01 00:00:00', '%Y-%m-%d %H:%M:%S'))
+        dec_2022 = str(datetime.strptime('2023-12-31 00:00:00', '%Y-%m-%d %H:%M:%S'))
         exiting_so = self.env['sale.order'].search([]).mapped('x_id')
         sale_orders = odoo.env['sale.order'].search(
             [('id', 'not in', exiting_so), ('create_date', '>=', jan_2022), ('create_date', '<=', dec_2022),
-             ('state', '=', 'sale')], order='id asc', limit=40)
+             ('state', '=', 'sale')], order='id asc', limit=100)
         counter = 0
         for sl_id in sale_orders:
             # if sl_id not in [38520, 38521]:
@@ -180,7 +180,7 @@ class Account(models.Model):
         # Current user
         user = odoo.env.user
 
-        sale_orders = self.env['sale.order'].search([('x_is_updated', '=', False)],limit=40)
+        sale_orders = self.env['sale.order'].search([('x_is_updated', '=', False)],limit=100)
 
         for order_id in sale_orders:
             x_sale_line = odoo.env['sale.order.line'].search([('id', '=', int(order_id.x_id))])
