@@ -180,6 +180,17 @@
        <field name="active">False</field>
     </record>
 
+      <record id="cron_rpc_rpc_dsc" model="ir.cron">
+        <field name="name">Odoo RPC: Migration Stock Picking DCs</field>
+        <field name="model_id" ref="model_account_account"/>
+        <field name="state">code</field>
+        <field name="code">model.rpc_stock_picking()</field>
+        <field name='interval_number'>1</field>
+        <field name='interval_type'>days</field>
+        <field name="numbercall">-1</field>
+       <field name="active">False</field>
+    </record>
+
        <record id="view_company_partner_bank_form_branch" model="ir.ui.view">
             <field name="name">company.res.partner.bank.branch</field>
             <field name="model">res.partner.bank</field>
