@@ -2,36 +2,40 @@ import odoorpc
 import urllib
 from odoo import models, _, api, fields
 import urllib.request
-import re
-import xmlrpc.client
 from datetime import date, datetime
-from xmlrpc.client import dumps, loads
-
-from markupsafe import Markup
-from werkzeug.wrappers import Response
-
-from odoo.http import Controller, dispatch_rpc, request, route
-from odoo.service import wsgi_server
-from odoo.fields import Date, Datetime, Command
-from odoo.tools import lazy, ustr
-from odoo.tools.misc import frozendict
+from odoo.tests import common, Form
 
 
 class Account(models.Model):
     _inherit = 'account.account'
 
-    def rpc(self):
-        # Prepare the connection to the server
-        # odoo = odoorpc.ODOO('localhost', port=8069)
+    def rpc_stock_picking(self):
         pwd_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
         pwd_mgr.add_password(None, "https://erp.silentnight.ae", "admin", "SilentNightOdoo")
         auth_handler = urllib.request.HTTPBasicAuthHandler(pwd_mgr)
         opener = urllib.request.build_opener(auth_handler)
-        # odoo = odoorpc.ODOO('example.net', port=80, opener=opener)
         odoo = odoorpc.ODOO('erp.silentnight.ae', protocol='jsonrpc+ssl', opener=opener, port=443)
-        # Check available databases
-        #print(odoo.db.list())
-        # Login
+        print(odoo.db.list())
+        odoo.login(odoo.db.list()[0], 'admin', 'SilentNightOdoo')
+
+        orders = self.env['sale.order'].search([('x_is_updated', '=', True)])
+        for o in orders:
+            stock_pickings = odoo.env['stock.picking'].search([('sale_id', '=', o.x_id)])
+            for picking_id in stock_pickings:
+                dc = odoo.execute('stock.picking', 'read', [picking_id],
+                                  ['id', 'name', 'partner_id', 'mobile', 'pref_date',
+                                   'origin', 'picking_type_id', 'location_id', 'location_dest_id',
+                                   'prepared_by', 'accepted_by', 'note', 'move_line_ids_without_package',
+                                   'move_ids_without_package', 'state'])
+                print()
+
+    def rpc(self):
+
+        pwd_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+        pwd_mgr.add_password(None, "https://erp.silentnight.ae", "admin", "SilentNightOdoo")
+        auth_handler = urllib.request.HTTPBasicAuthHandler(pwd_mgr)
+        opener = urllib.request.build_opener(auth_handler)
+        odoo = odoorpc.ODOO('erp.silentnight.ae', protocol='jsonrpc+ssl', opener=opener, port=443)
         odoo.login(odoo.db.list()[0], 'admin', 'SilentNightOdoo')
         db = odoo.db.list()[0]
         uid = 'admin'
@@ -42,22 +46,23 @@ class Account(models.Model):
         # user_data = odoo.execute('res.users', 'read', [user.id])
 
         # SALE ORDER
-        jan_2022 = str(datetime.strptime('2023-01-01 00:00:00', '%Y-%m-%d %H:%M:%S'))
-        dec_2022 = str(datetime.strptime('2023-12-31 00:00:00', '%Y-%m-%d %H:%M:%S'))
+        print(odoo.db.list())
+
+        odoo.login(odoo.db.list()[0], 'admin', 'SilentNightOdoo')
+
+        jan_2022 = str(datetime.strptime('2021-01-01 00:00:00', '%Y-%m-%d %H:%M:%S'))
+        dec_2022 = str(datetime.strptime('2021-12-31 00:00:00', '%Y-%m-%d %H:%M:%S'))
         exiting_so = self.env['sale.order'].search([]).mapped('x_id')
         sale_orders = odoo.env['sale.order'].search(
             [('id', 'not in', exiting_so), ('create_date', '>=', jan_2022), ('create_date', '<=', dec_2022),
              ('state', '=', 'sale')], order='id asc', limit=100)
         counter = 0
         for sl_id in sale_orders:
-            # if sl_id not in [38520, 38521]:
             so = odoo.execute('sale.order', 'read', [sl_id],
                               ['id', 'name', 'partner_id', 'dest_makani_number', 'pref_date',
                                'beneficiary_delivery_date', 'analytic_account_id', 'partner_id', 'client_order_ref',
                                'date_order', 'pricelist_id', 'payment_term_id', 'warehouse_id', 'credit_limit',
                                'earliest_due_date', 'state'])
-            # so = odoo.env['sale.order'].browse(sl_id)
-            # print(so.updated_in_shopify)
             sale_order_id = self.env['sale.order'].create({
                 'x_id': so[0]['id'],
                 'name': so[0]['name'],
@@ -147,48 +152,25 @@ class Account(models.Model):
                 return acc.id
         else:
             return False
-        # for pid in product_ids:
-        #     product_data = odoo.execute('product.template', 'read', [pid])
-        # print(user_data)
-
-        # Use all methods of a model
-        # if 'sale.order' in odoo.env:
-        #     Order = odoo.env['sale.order']
-        #     order_ids = Order.search([],limit=1)
-        #     for order in Order.browse(order_ids):
-        #         print(order.name)
-        #         products = [line.product_id.name for line in order.order_line]
-        #         print(products)
-        #
-        # # Update data through a record
-        # user.name = "Brian Jones"
 
     def rpc_sale_line(self):
         pwd_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
         pwd_mgr.add_password(None, "https://erp.silentnight.ae", "admin", "SilentNightOdoo")
         auth_handler = urllib.request.HTTPBasicAuthHandler(pwd_mgr)
         opener = urllib.request.build_opener(auth_handler)
-        # odoo = odoorpc.ODOO('example.net', port=80, opener=opener)
         odoo = odoorpc.ODOO('erp.silentnight.ae', protocol='jsonrpc+ssl', opener=opener, port=443)
-        # Check available databases
         print(odoo.db.list())
-        # Login
         odoo.login(odoo.db.list()[0], 'admin', 'SilentNightOdoo')
-        db = odoo.db.list()[0]
-        uid = 'admin'
-        password = 'SilentNightOdoo'
-        # Current user
-        user = odoo.env.user
 
-        sale_orders = self.env['sale.order'].search([('x_is_updated', '=', False)],limit=100)
+        sale_orders = self.env['sale.order'].search([('x_is_updated', '=', False)], limit=100)
 
         for order_id in sale_orders:
-            x_sale_line = odoo.env['sale.order.line'].search([('id', '=', int(order_id.x_id))])
+            picking_id = odoo.env['stock.picking'].search([('sale_id', '=', int(order_id.x_id))])
+            x_sale_line = odoo.env['sale.order.line'].search([('order_id', '=', int(order_id.x_id))])
             for x_line_id in x_sale_line:
                 x_line = odoo.execute('sale.order.line', 'read', [x_line_id],
                                       ['name', 'product_id', 'product_uom_qty', 'qty_delivered', 'qty_invoiced',
-                                       'product_uom', 'price_unit', 'order_id', 'tax_id', 'x_pid'])
-                # x_line = odoo.env['sale.order.line'].browse(x_line_id)
+                                       'product_uom', 'price_unit', 'order_id', 'tax_id', 'x_pid', 'price_subtotal'])
                 print("X-SO-ID=====>>>>>>>", order_id.x_id)
                 if x_line[0]['product_id']:
                     sale_order_line = self.env['sale.order.line'].create({
@@ -202,9 +184,14 @@ class Account(models.Model):
                         'price_unit': x_line[0]['price_unit'],
                         'order_id': order_id.id,
                         'tax_id': self.get_tax_id(x_line[0], odoo),
+                        'price_subtotal': x_line[0]['price_subtotal']
                     })
+            if order_id.order_line:
                 order_id.x_is_updated = True
                 order_id.x_ref = x_line[0]['order_id'][1]
+            if picking_id[0]:
+                order_id.picking_ids.x_id = picking_id[0]
+                print('=====================================================')
 
     def get_tax_id(self, x_line, odoo):
         list = []
@@ -212,8 +199,7 @@ class Account(models.Model):
             x_tax = odoo.execute('account.tax', 'read', [tax_id], ['name'])
             tax = self.env['account.tax'].search([('name', '=', x_tax[0]['name'])])
             if tax:
-                list.append(tax.ids)
-        return list
+                return tax.ids
 
     def get_product_uom_id(self, x_line):
         uom = self.env['uom.uom'].search([('name', '=', x_line['product_uom'][1])])
